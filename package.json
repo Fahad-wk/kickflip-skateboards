@@ -27,17 +27,17 @@
   },
   "devDependencies": {
     "@slicemachine/adapter-next": "^0.3.61",
+    "@types/matter-js": "^0.19.8",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-      "@types/matter-js": "^0.19.8", 
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "fluid-tailwind": "^1.0.4",
     "postcss": "^8",
+    "serve": "^14.2.1",
     "slice-machine-ui": "^2.11.1",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5",
-    "serve": "^14.2.1"
+    "typescript": "^5"
   }
 }
