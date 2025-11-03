@@ -1,0 +1,39 @@
+name: Build static site to 'build' branch
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build static export
+        run: npm run build
+
+      - name: Publish to 'build' branch
+        run: |
+          rm -rf /tmp/deploy && mkdir -p /tmp/deploy
+          cp -r out/* /tmp/deploy/
+          cd /tmp/deploy
+          git init
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git checkout -b build
+          git add .
+          git commit -m "Deploy $(date -u +'%Y-%m-%d %H:%M:%S')"
+          git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} build
