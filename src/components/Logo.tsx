@@ -1,15 +1,23 @@
+'use client';
+
+import Image, { ImageProps } from "next/image";
 import React from "react";
 
-// 🧩 Define props type — inherits all <img> attributes (including className)
-interface LogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
+// ✅ Extend valid Image props — NO empty interface rule triggered
+type LogoProps = Omit<ImageProps, "src" | "alt" | "width" | "height"> & {
+  className?: string;
+};
 
 export default function Logo({ className = "", ...props }: LogoProps) {
   return (
-    <img
+    <Image
       src="/logo.svg"
       alt="Kickflip Skateboards"
-      className={`select-none ${className}`}
+      width={120}
+      height={32}
       draggable={false}
+      priority
+      className={`select-none ${className}`}
       {...props}
     />
   );

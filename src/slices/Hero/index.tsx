@@ -1,9 +1,5 @@
 import { asImageSrc, Content } from "@prismicio/client";
-import {
-  PrismicRichText,
-  PrismicText,
-  SliceComponentProps,
-} from "@prismicio/react";
+import { PrismicRichText, SliceComponentProps } from "@prismicio/react";
 
 import { Bounded } from "@/components/Bounded";
 import { Heading } from "@/components/Heading";
@@ -27,12 +23,13 @@ export type HeroProps = SliceComponentProps<Content.HeroSlice>;
  */
 const Hero = ({ slice }: HeroProps): JSX.Element => {
   const deckTextureURL =
-    asImageSrc(slice.primary.skateboard_deck_texture) || DEFAULT_DECK_TEXTURE;
+    asImageSrc(slice.primary.skateboard_deck_texture) ?? DEFAULT_DECK_TEXTURE;
+
   const wheelTextureURL =
-    asImageSrc(slice.primary.skateboard_wheel_texture) || DEFAULT_WHEEL_TEXTURE;
-  const truckColor =
-    slice.primary.skateboard_truck_color || DEFAULT_TRUCK_COLOR;
-  const boltColor = slice.primary.skateboard_bolt_color || DEFAULT_BOLT_COLOR;
+    asImageSrc(slice.primary.skateboard_wheel_texture) ?? DEFAULT_WHEEL_TEXTURE;
+
+  const truckColor = slice.primary.skateboard_truck_color ?? DEFAULT_TRUCK_COLOR;
+  const boltColor = slice.primary.skateboard_bolt_color ?? DEFAULT_BOLT_COLOR;
 
   return (
     <Bounded
@@ -49,17 +46,19 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
         <Heading className="relative max-w-2xl place-self-start">
           <span>ESCAPE THE ORDINARY</span>
         </Heading>
+
         <div className="flex relative w-full flex-col items-center justify-between ~gap-2/4 lg:flex-row">
           <div className="max-w-[45ch] font-semibold ~text-lg/xl">
             <PrismicRichText field={slice.primary.body} />
           </div>
+
           <ButtonLink
             field={slice.primary.button}
             icon="skateboard"
             size="lg"
             className="z-20 mt-2 block"
           >
-            {slice.primary.button.text}
+            {slice.primary.button?.text ?? "Shop now"}
           </ButtonLink>
         </div>
       </div>
