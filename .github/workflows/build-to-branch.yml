@@ -19,13 +19,45 @@ jobs:
         with:
           node-version: 20
 
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+
       - name: Install deps
         run: npm ci
+
+      # Remove routes that block static export (keep them in repo for local dev)
+      - name: Remove non-exportable routes
+        run: |
+          if [ -d "src/app/api" ]; then
+            echo "Removing src/app/api for static export..."
+            rm -rf src/app/api
+          fi
+          if [ -d "src/app/build" ]; then
+            echo "Removing src/app/build for static export..."
+            rm -rf src/app/build
+          fi
+          if [ -d "src/app/slice-simulator" ]; then
+            echo "Removing src/app/slice-simulator for static export..."
+            rm -rf src/app/slice-simulator
+          fi
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            next-${{ runner.os }}-
 
       - name: Build static export
         run: npm run build
 
-      - name: Publish to 'build' branch
+      - name: Publish to 'build' branch'
         run: |
           rm -rf /tmp/deploy && mkdir -p /tmp/deploy
           cp -r out/* /tmp/deploy/
