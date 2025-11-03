@@ -19,18 +19,36 @@ jobs:
         with:
           node-version: 20
 
+      - name: Cache npm
+      # speeds up npm ci
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+
       - name: Install deps
         run: npm ci
 
-      # 🔧 Strip App Router API routes only in CI (required for output: 'export')
-      - name: Remove API routes for static export
+      - name: Remove non-exportable routes
         run: |
           if [ -d "src/app/api" ]; then
             echo "Removing src/app/api for static export..."
             rm -rf src/app/api
-          else
-            echo "No src/app/api folder found. Skipping."
           fi
+          if [ -d "src/app/build" ]; then
+            echo "Removing src/app/build for static export..."
+            rm -rf src/app/build
+          fi
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            next-${{ runner.os }}-
 
       - name: Build static export
         run: npm run build
