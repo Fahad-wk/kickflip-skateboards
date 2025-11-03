@@ -20,7 +20,6 @@ jobs:
           node-version: 20
 
       - name: Cache npm
-      # speeds up npm ci
         uses: actions/cache@v4
         with:
           path: ~/.npm
@@ -31,6 +30,7 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      # Remove routes that block static export (keep them in repo for local dev)
       - name: Remove non-exportable routes
         run: |
           if [ -d "src/app/api" ]; then
@@ -40,6 +40,10 @@ jobs:
           if [ -d "src/app/build" ]; then
             echo "Removing src/app/build for static export..."
             rm -rf src/app/build
+          fi
+          if [ -d "src/app/slice-simulator" ]; then
+            echo "Removing src/app/slice-simulator for static export..."
+            rm -rf src/app/slice-simulator
           fi
 
       - name: Cache Next.js build cache
@@ -53,7 +57,7 @@ jobs:
       - name: Build static export
         run: npm run build
 
-      - name: Publish to 'build' branch
+      - name: Publish to 'build' branch'
         run: |
           rm -rf /tmp/deploy && mkdir -p /tmp/deploy
           cp -r out/* /tmp/deploy/
